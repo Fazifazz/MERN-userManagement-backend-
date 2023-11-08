@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require('cookie-parser')
 const app = express();
+const path = require('path')
 const mongoose = require("mongoose");
 const userController  = require('./Controllers/userController')
 const adminController  = require('./Controllers/adminController')
@@ -15,12 +16,14 @@ mongoose
   .catch((error) => console.log(error));
 
 app.use(cors({
-    origin:['http://localhost:3001'],
+    origin:['http://localhost:3000'],
     methods:['GET','POST'],
     credentials:true
 }));
 app.use(cookieParser())
 app.use(express.json());
+app.use(express.urlencoded({extended:true}))
+app.use(express.static(path.join(__dirname, 'public')))
 
 app.get('/checkLoggin',isLoggedOut,userController.checkLogin)
 app.get("/register",isLoggedOut,userController.checkLogin )
@@ -29,7 +32,7 @@ app.post("/register",userController.createUser )
 app.post("/login",userController.verifyLogin )
 app.get('/userLogout',isLoggedIn,userController.userLogout)
 app.get('/userHome',isLoggedIn,verifyToken,userController.getUserHome)
-app.post('/updateProfile',isLoggedIn,verifyToken,userController.updateProfile)
+app.post('/editProfile',isLoggedIn,userController.uploadUserProfile,userController.resizeUserProfile,userController.editProfile)
 
 
 
