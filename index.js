@@ -6,7 +6,7 @@ const path = require('path')
 const mongoose = require("mongoose");
 const userController  = require('./Controllers/userController')
 const adminController  = require('./Controllers/adminController')
-const {isLoggedIn,isAdminLoggedIn,isLoggedOut,isAdminLoggedOut,verifyToken} = require('./Middlewares/auth')
+const {isLoggedIn,isAdminLoggedIn,isAdminLoggedOut} = require('./Middlewares/auth')
 
 
 
@@ -25,28 +25,28 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.get('/checkLoggin',isLoggedOut,userController.checkLogin)
-app.get("/register",isLoggedOut,userController.checkLogin )
 
+//user routes
 app.post("/register",userController.createUser )
 app.post("/login",userController.verifyLogin )
 app.get('/userLogout',isLoggedIn,userController.userLogout)
-app.get('/userHome',isLoggedIn,verifyToken,userController.getUserHome)
 app.post('/editProfile',isLoggedIn,userController.uploadUserProfile,userController.resizeUserProfile,userController.editProfile)
 
 
+//for user and admin session managements
+app.get('/checkLogged',isLoggedIn,userController.checkLogin)
+app.get('/adminLogin',isAdminLoggedOut,adminController.getAdminLogin)
+
 
 //admin routes
-
-app.get('/adminLogin',isAdminLoggedOut,adminController.getAdminLogin)
 
 app.post('/adminLogin',adminController.verifyAdminLogin)
 app.get('/dashboard',isAdminLoggedIn,adminController.getDashboard)
 app.get('/getUsers',isAdminLoggedIn,adminController.getUsers)
 app.get('/adminLogout',isAdminLoggedIn,adminController.adminLogout)
 app.post('/deleteUser',isAdminLoggedIn,adminController.deleteUser)
-
 app.post('/createUser',isAdminLoggedIn,adminController.createUser)
+app.get('/checkAdminLogged',isAdminLoggedIn,adminController.checkAdminLogged)
 app.post('/UpdateUser',isAdminLoggedIn, adminController.updateUser)
 
 

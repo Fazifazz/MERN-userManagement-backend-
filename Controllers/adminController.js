@@ -163,3 +163,8 @@ exports.updateUser = async (req, res) => {
     return res.json({ error: "Failed to update user."});
   }
 };
+
+
+exports.checkAdminLogged = (req,res)=>{
+  res.json({success:'admin already logged'})
+}
